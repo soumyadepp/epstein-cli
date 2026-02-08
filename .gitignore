@@ -43,3 +43,4 @@ env/
 # uv
 .python-version
 uv.lock.bak
+.coverage
