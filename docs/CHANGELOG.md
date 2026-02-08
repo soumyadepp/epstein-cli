@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.0] - 2026-02-08
+
+### Added
+
+- Comprehensive test suite with 24 tests covering client and CLI functionality
+- GitHub Actions test workflow for automated testing on Python 3.9-3.12
+- Test requirement for PyPI publishing (tests must pass before release)
+- Coverage reporting with pytest-cov
+- Test fixtures and conftest.py for pytest configuration
+- Optional dev dependencies (pytest, pytest-cov)
+
+### Improved
+
+- Enhanced CI/CD pipeline with test-before-publish requirement
+- Better code quality assurance for all releases
+
 ## [0.1.0] - 2026-02-08
 
 ### Added
