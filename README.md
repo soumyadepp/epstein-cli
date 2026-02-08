@@ -39,10 +39,10 @@ python3 -m epstein.cli --search "donald" --limit 50
 ### Search and save results to files
 
 ```bash
-python3 -m epstein.cli --search "artificial intelligence" --limit 100 --prefix ai_docs
+python3 -m epstein.cli --search "artificial intelligence" --limit 100 --prefix ai_docs --output-path reports
 ```
 
-This creates three files:
+This creates three files in the `reports` directory:
 
 - `ai_docs_TIMESTAMP.json` - Full document metadata in JSON
 - `ai_docs_TIMESTAMP.csv` - Comma-separated values for spreadsheet import
@@ -66,6 +66,7 @@ python3 -m epstein.cli --help
 - `-l, --limit N` - Maximum number of results to fetch
 - `-d, --delay SECONDS` - Delay between API requests (default: 0.5)
 - `-o, --prefix NAME` - Output file prefix (default: epstein_library)
+- `--output-path PATH` - Directory to save report files (default: lib_data)
 - `--no-save` - Don't save to files, just display results
 - `--head N` - Number of top results to display (default: 10)
 
@@ -134,5 +135,5 @@ client = DOJMultimediaSearchClient()
 documents = client.search_all(query="donald", max_results=50)
 
 # Save results
-client.save_results(documents, prefix="my_search")
+client.save_results(documents, prefix="my_search", output_path="my_reports")
 ```

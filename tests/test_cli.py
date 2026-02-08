@@ -68,11 +68,9 @@ class TestCLI:
 
     @patch("epstein.client.DOJMultimediaSearchClient.search_all")
     @patch("epstein.client.DOJMultimediaSearchClient.save_results")
-    def test_main_search_with_save(
-        self, mock_save, mock_search, monkeypatch, temp_lib_data
-    ):
-        """Test search with file saving"""
-        mock_search.return_value = [
+    def test_main_search_with_save(self, mock_save, mock_search, monkeypatch):
+        """Test search with file saving uses default output path"""
+        documents = [
             {
                 "title": "Test1.pdf",
                 "file_name": "Test1.pdf",
@@ -87,6 +85,7 @@ class TestCLI:
                 "page": 0,
             }
         ]
+        mock_search.return_value = documents
         mock_save.return_value = ("test.json", "test.csv", "test_urls.txt")
 
         monkeypatch.setattr(
@@ -96,8 +95,40 @@ class TestCLI:
         )
         main()
 
-        # Verify save_results was called
-        mock_save.assert_called_once()
+        # Verify save_results was called with default output_path
+        mock_save.assert_called_once_with(
+            documents, prefix="mytest", output_path="lib_data"
+        )
+
+    @patch("epstein.client.DOJMultimediaSearchClient.search_all")
+    @patch("epstein.client.DOJMultimediaSearchClient.save_results")
+    def test_main_search_with_custom_output_path(
+        self, mock_save, mock_search, monkeypatch, tmp_path
+    ):
+        """Test search with custom output path"""
+        documents = [{"title": "Test1.pdf", "file_name": "Test1.pdf", "url": "https://example.com/test1.pdf"}]
+        mock_search.return_value = documents
+        mock_save.return_value = ("test.json", "test.csv", "test_urls.txt")
+
+        output_dir = tmp_path / "my_reports"
+
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            [
+                "epstein",
+                "--search",
+                "test",
+                "--output-path",
+                str(output_dir),
+            ],
+        )
+        main()
+
+        # Verify save_results was called with the custom output_path
+        mock_save.assert_called_once_with(
+            documents, prefix="epstein_library", output_path=str(output_dir)
+        )
 
     @patch("epstein.client.DOJMultimediaSearchClient.search_all")
     def test_main_custom_delay(self, mock_search, monkeypatch):

@@ -195,21 +195,21 @@ class DOJMultimediaSearchClient:
 
         return all_documents
 
-    def save_results(self, documents, prefix="epstein_library"):
-        """Save results in multiple formats to lib_data folder"""
-        # Create lib_data folder if it doesn't exist
-        os.makedirs("lib_data", exist_ok=True)
+    def save_results(self, documents, prefix="epstein_library", output_path="lib_data"):
+        """Save results in multiple formats to the specified output folder"""
+        # Create output folder if it doesn't exist
+        os.makedirs(output_path, exist_ok=True)
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         # JSON file
-        json_file = f"lib_data/{prefix}_{timestamp}.json"
+        json_file = os.path.join(output_path, f"{prefix}_{timestamp}.json")
         with open(json_file, "w", encoding="utf-8") as f:
             json.dump(documents, f, indent=2, ensure_ascii=False)
         print(f"\n✓ Saved JSON: {json_file}")
 
         # CSV file
-        csv_file = f"lib_data/{prefix}_{timestamp}.csv"
+        csv_file = os.path.join(output_path, f"{prefix}_{timestamp}.csv")
         with open(csv_file, "w", newline="", encoding="utf-8") as f:
             if documents:
                 writer = csv.DictWriter(f, fieldnames=documents[0].keys())
@@ -218,7 +218,7 @@ class DOJMultimediaSearchClient:
         print(f"✓ Saved CSV: {csv_file}")
 
         # Simple URL list
-        urls_file = f"lib_data/{prefix}_{timestamp}_urls.txt"
+        urls_file = os.path.join(output_path, f"{prefix}_{timestamp}_urls.txt")
         with open(urls_file, "w", encoding="utf-8") as f:
             for doc in documents:
                 f.write(f"{doc['url']}\n")

@@ -68,6 +68,11 @@ def main():
         help="Output file prefix",
     )
     parser.add_argument(
+        "--output-path",
+        default="lib_data",
+        help="Directory to save report files",
+    )
+    parser.add_argument(
         "--base-url",
         default="https://www.justice.gov/multimedia-search",
         help="Base search endpoint URL",
@@ -104,7 +109,7 @@ def main():
 
     if not args.no_save:
         json_file, csv_file, urls_file = client.save_results(
-            documents, prefix=args.prefix
+            documents, prefix=args.prefix, output_path=args.output_path
         )
 
     # Show first few results

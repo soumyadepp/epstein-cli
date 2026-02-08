@@ -67,29 +67,41 @@ class TestDOJMultimediaSearchClient:
 
         assert len(documents) > 0
 
-    def test_save_results_creates_files(self, mock_requests_get, temp_lib_data):
-        """Test that save_results creates all three files"""
+    def test_save_results_uses_default_path(self, mock_requests_get, temp_lib_data):
+        """Test that save_results uses 'lib_data' by default"""
         client = DOJMultimediaSearchClient()
         documents, _ = client.search(query="test")
 
-        json_file, csv_file, txt_file = client.save_results(documents, prefix="test")
+        json_file, _, _ = client.save_results(documents, prefix="test")
 
-        # Check files were created
+        # Check that the file is in the default 'lib_data' directory
+        assert Path(json_file).parent.name == "lib_data"
         assert Path(json_file).exists()
-        assert Path(csv_file).exists()
-        assert Path(txt_file).exists()
 
-        # Check file names
-        assert "test_" in json_file
-        assert ".json" in json_file
-        assert ".csv" in csv_file
-        assert "_urls.txt" in txt_file
+    def test_save_results_creates_files_in_custom_path(
+        self, mock_requests_get, tmp_path
+    ):
+        """Test that save_results creates all three files in a custom path"""
+        client = DOJMultimediaSearchClient()
+        documents, _ = client.search(query="test")
 
-    def test_save_results_json_format(self, mock_requests_get, temp_lib_data):
+        output_dir = tmp_path / "custom_reports"
+        json_file, csv_file, txt_file = client.save_results(
+            documents, prefix="test", output_path=output_dir
+        )
+
+        # Check files were created in the custom path
+        assert Path(json_file).parent == output_dir
+        assert Path(csv_file).parent == output_dir
+        assert Path(txt_file).parent == output_dir
+
+    def test_save_results_json_format(self, mock_requests_get, tmp_path):
         """Test that saved JSON is valid"""
         client = DOJMultimediaSearchClient()
         documents, _ = client.search(query="test")
-        json_file, _, _ = client.save_results(documents, prefix="test")
+        json_file, _, _ = client.save_results(
+            documents, prefix="test", output_path=tmp_path
+        )
 
         with open(json_file) as f:
             data = json.load(f)
@@ -98,11 +110,13 @@ class TestDOJMultimediaSearchClient:
         assert len(data) == 2
         assert data[0]["file_name"] == "EFTA00796097.pdf"
 
-    def test_save_results_csv_format(self, mock_requests_get, temp_lib_data):
+    def test_save_results_csv_format(self, mock_requests_get, tmp_path):
         """Test that saved CSV is valid"""
         client = DOJMultimediaSearchClient()
         documents, _ = client.search(query="test")
-        _, csv_file, _ = client.save_results(documents, prefix="test")
+        _, csv_file, _ = client.save_results(
+            documents, prefix="test", output_path=tmp_path
+        )
 
         with open(csv_file) as f:
             content = f.read()
@@ -113,11 +127,13 @@ class TestDOJMultimediaSearchClient:
         lines = content.strip().split("\n")
         assert len(lines) == 3  # header + 2 documents
 
-    def test_save_results_txt_format(self, mock_requests_get, temp_lib_data):
+    def test_save_results_txt_format(self, mock_requests_get, tmp_path):
         """Test that saved TXT file has correct URLs"""
         client = DOJMultimediaSearchClient()
         documents, _ = client.search(query="test")
-        _, _, txt_file = client.save_results(documents, prefix="test")
+        _, _, txt_file = client.save_results(
+            documents, prefix="test", output_path=tmp_path
+        )
 
         with open(txt_file) as f:
             urls = f.read().strip().split("\n")
@@ -161,10 +177,12 @@ class TestDOJMultimediaSearchClient:
             assert documents == []
             assert has_next is False
 
-    def test_save_results_empty_list(self, temp_lib_data):
+    def test_save_results_empty_list(self, tmp_path):
         """Test save_results with empty document list"""
         client = DOJMultimediaSearchClient()
-        json_file, csv_file, txt_file = client.save_results([], prefix="empty")
+        json_file, csv_file, txt_file = client.save_results(
+            [], prefix="empty", output_path=tmp_path
+        )
 
         # Files should still be created
         assert Path(json_file).exists()

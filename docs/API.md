@@ -115,7 +115,8 @@ Save search results to JSON, CSV, and TXT files.
 ```python
 json_file, csv_file, urls_file = client.save_results(
     documents,
-    prefix="epstein_library"
+    prefix="epstein_library",
+    output_path="lib_data"
 )
 ```
 
@@ -123,6 +124,8 @@ json_file, csv_file, urls_file = client.save_results(
 
 - `documents` (list): List of document dictionaries
 - `prefix` (str): File prefix. Default: "epstein_library"
+- `output_path` (str): Directory to save files. Default: "lib_data"
+
 
 **Returns:**
 
@@ -130,7 +133,7 @@ json_file, csv_file, urls_file = client.save_results(
 - `csv_file` (str): Path to saved CSV file
 - `urls_file` (str): Path to saved URLs text file
 
-**Note:** Files are automatically saved to the `lib_data/` folder.
+**Note:** Files are saved to the specified `output_path`, which defaults to `lib_data/`.
 
 **Example:**
 
@@ -138,7 +141,8 @@ json_file, csv_file, urls_file = client.save_results(
 documents = client.search_all(query="banking", max_results=200)
 json_path, csv_path, urls_path = client.save_results(
     documents,
-    prefix="banking_records"
+    prefix="banking_records",
+    output_path="reports/banking"
 )
 
 print(f"Results saved to:")

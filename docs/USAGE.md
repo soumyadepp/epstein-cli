@@ -28,6 +28,7 @@ epstein [options]
 | `-l`         | `--limit`  | int    | `None`            | Maximum number of results to fetch   |
 | `-d`         | `--delay`  | float  | `0.5`             | Delay between API requests (seconds) |
 | `-o`         | `--prefix` | string | `epstein_library` | Output file prefix                   |
+|              |`--output-path`| string | `lib_data`        | Directory to save report files      |
 | `--base-url` | -          | string | DOJ URL           | Base search endpoint                 |
 | `--no-save`  | -          | flag   | `false`           | Don't save to files, just display    |
 | `--head`     | -          | int    | `10`              | Number of top results to display     |
@@ -41,7 +42,7 @@ epstein [options]
 epstein --search "artificial intelligence" --limit 100
 ```
 
-Creates three files in `lib_data/`:
+Creates three files in the `lib_data/` directory (or your custom `--output-path`):
 
 - `epstein_library_TIMESTAMP.json` - Full metadata
 - `epstein_library_TIMESTAMP.csv` - Spreadsheet format
@@ -71,7 +72,15 @@ epstein --search "banking" --limit 50 --prefix "banking_docs"
 
 Files will be named `banking_docs_TIMESTAMP.*`
 
-### 5. Slow Down Requests
+### 5. Save to a Custom Directory
+
+```bash
+epstein --search "finance" --limit 20 --output-path "reports/finance"
+```
+
+Files will be saved in the `reports/finance` directory.
+
+### 6. Slow Down Requests
 
 ```bash
 epstein --search "contacts" --limit 200 --delay 1.0
@@ -79,7 +88,7 @@ epstein --search "contacts" --limit 200 --delay 1.0
 
 Wait 1 second between API calls (useful if getting rate limited).
 
-### 6. Quick Search (No Pagination)
+### 7. Quick Search (No Pagination)
 
 ```bash
 epstein --search "documents" --limit 10 --no-save --head 10
@@ -156,7 +165,7 @@ epstein --search "clinton" --prefix clinton_docs
 Export to CSV and use Excel's filter feature to find specific documents:
 
 1. Run: `epstein --search "query" --limit 1000`
-2. Open `lib_data/epstein_library_*.csv` in Excel
+2. Open the `epstein_library_*.csv` file in your output directory (default: `lib_data/`) in Excel
 3. Use AutoFilter to search by file size, date, pages, etc.
 
 ### Download PDFs in Bulk
